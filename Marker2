@@ -28,21 +28,34 @@ def mark_present():
 
     rollNumber=int(input('Scan the barcode:'))
     
-    for i in data:
-        if i[0] == rollNumber:
-            studentName=i[1]
-            Status = 'Present'
-            
+    select_present_data_query=f'select * from {today_table_name} where rollnumber=%s'
+    mycursor.execute(select_present_data_query,(rollNumber,))
+    present_data=mycursor.fetchone()
 
-    insert_query = f'insert ignore into `{today_table_name}` values (%s,%s,%s,%s)'
-    insert_values = (rollNumber,studentName,today,Status)
+    if present_data is None :
+        for i in data:
+            if i[0] == rollNumber:
+                studentName=i[1]
+                Status = 'Present'
+                
 
-    mycursor.execute(insert_query,insert_values)
-    mydb.commit()
+        insert_query = f'insert ignore into `{today_table_name}` values (%s,%s,%s,%s)'
+        insert_values = (rollNumber,studentName,today,Status)
 
-    print(f'Attendance marked for {studentName}')
-    
+        mycursor.execute(insert_query,insert_values)
+        mydb.commit()
 
+        print(f'Attendance marked for {studentName}')
+
+    elif present_data[3]=='Absent':
+        change=input('Student marked Absent does changes required?(y/n)')
+        if change.lower()=='y':
+            update_query=f"update {today_table_name} set status='Present',Attendance_time=%s where rollnumber=%s"
+            mycursor.execute(update_query,(today,rollNumber))
+            mydb.commit()
+            print('Changes made successfully')
+        else:
+            pass
 def mark_absent():
     select_absent_query = f'select A.rollNumber,A.studentName,B.Attendance_time,B.Status from student_details A left join {today_table_name} B on A.rollNumber=B.rollNumber'
     mycursor.execute(select_absent_query)
