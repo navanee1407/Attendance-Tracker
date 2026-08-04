@@ -9,6 +9,7 @@ mycursor=mydb.cursor()
 today=datetime.datetime.now().strftime('%d/%m/%Y-%H:%M')
 today_table_name = datetime.date.today().strftime('%d_%m_%Y')
 
+
 def create_today_table():
     create_today_table_query = f""" 
     create table if not exists `{today_table_name}`(
@@ -26,20 +27,20 @@ def mark_present():
     data=mycursor.fetchall()
 
     rollNumber=int(input('Scan the barcode:'))
-
+    
     for i in data:
         if i[0] == rollNumber:
             studentName=i[1]
             Status = 'Present'
+            
 
-    insert_query = f'insert into `{today_table_name}` values (%s,%s,%s,%s)'
+    insert_query = f'insert ignore into `{today_table_name}` values (%s,%s,%s,%s)'
     insert_values = (rollNumber,studentName,today,Status)
 
     mycursor.execute(insert_query,insert_values)
     mydb.commit()
 
     print(f'Attendance marked for {studentName}')
-    cont=input('Do you want to continue(y/n:)')
     
 
 def mark_absent():
@@ -59,17 +60,19 @@ def mark_absent():
     mycursor.execute(insert_absent_query,insert_absent_values)
     mydb.commit()
     print('Attendance closed successfully')
-    cont=input('Do you want to continue(y/n:)')
+    
     
 
 create_today_table()
 
+print("'1' for Mark Attendance")
+print("'2' for Close Attendance")
 cont='y'
-while cont.lower()=='y':
-    print("'1' for Mark Attendance")
-    print("'2' for Close Attendance")
+while (cont.lower()=='y'):
+    
     opt=int(input('Choose your option:'))
     if opt==1:
         mark_present()
     elif opt==2:
         mark_absent()
+    cont=input('Do you want to continue(y/n:)')
