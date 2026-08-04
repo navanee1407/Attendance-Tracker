@@ -47,15 +47,7 @@ while cont.lower()=='y':
         for i in present_data:
             if i[0]==rollNumber:
                 print(f'Attendance already marked for {i[1]}')
-                cont=input('Do you want to continue(y/n:)')
-
-            elif i[3] == 'Absent':
-                change=input('Student marked absent, do you need to change it(y/n):')
-                if change.lower()=='y':
-                    update_query=f"update {today_table_name} set Attendance_time={today},Status='Present' where rollnumber={rollNumber}"
-                    
             else:
-
                 for j in list_records:
                     if j[0] == rollNumber:
                         studentName=j[1]
