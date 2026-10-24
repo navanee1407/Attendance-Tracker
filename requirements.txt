@@ -1,0 +1,6 @@
+mysql-connector-python
+python-barcode[images]
+Pillow
+pandas
+openpyxl
+SQLAlchemy
